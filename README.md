@@ -1,0 +1,107 @@
+# WiFiLogParser Paper Repro Repository
+
+This repository packages the **WiFiLogParser main method** (from `WilDash_webapp-github`) with the requested datasets and one-click experiment scripts for paper reproduction.
+
+## Included content
+
+- Method code (main method only, no ablation scripts):
+  - `src/apps_v2/logparser/services/wifi_log_parser/`
+  - `src/apps_v2/logparser/services/log_extractor/`
+- Dataset support (datasets are **not included** in the repo):
+  - Wilson 50k, University 50k, HS full
+  - Expected paths are documented in `data/README.md`
+- Paper package from `WiFiLogParser___IEEE_access___V1.zip`:
+  - `paper/WiFiLogParser_Main.tex`
+  - `paper/references.bib`
+  - `paper/figure/`
+  - `paper/Authors/`
+
+## Environment setup
+
+1. Create and activate a virtual environment.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+2. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Or use Makefile:
+
+```bash
+make install
+```
+
+3. Configure LLM credentials:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and set at least:
+
+- `LLM_API_KEY`
+
+Optional but common for OpenRouter:
+
+- `LLM_BASE_URL=https://openrouter.ai/api/v1`
+- `LLM_PRIMARY_MODEL=google/gemini-2.0-flash`
+- `LLM_FALLBACK_MODELS=google/gemini-2.0-flash` (repair uses same model as main parsing)
+
+## Run main experiments
+
+Before running, you must place the raw logs and ground-truth files locally (they are not shipped in this repo). See `data/README.md`.
+
+Run all three datasets:
+
+```bash
+./scripts/run_main.sh
+```
+
+`run_main.sh` automatically uses `.venv/bin/python` when available.
+
+Or (if using Makefile + local `.venv`):
+
+```bash
+make run
+```
+
+Or run directly:
+
+```bash
+python3 scripts/run_main_experiments.py --config configs/main_experiment.json
+```
+
+Run a subset:
+
+```bash
+python3 scripts/run_main_experiments.py --dataset Wilson_50000 --dataset HS_full
+```
+
+## Outputs
+
+Each run writes to `outputs/<run_id>/`:
+
+- `summary_main.csv` / `summary_main.json`
+- Per dataset folder (e.g., `outputs/<run_id>/Wilson_50000/`):
+  - `records.jsonl`
+  - `stats.json`
+  - `metrics.json`
+
+Reference (aggregated) metrics from the authors' run are provided in `results/reference_metrics_main.csv`.
+
+## Notes on evaluation
+
+- Wilson / University use **line-index matching** (`OriginalLineIdx`) with log-line filtering for 50k subsets.
+- HS uses **record-level matching** (`DateTime + Action + ApId + ClientId`) because `HS_gt.csv` contains repeated `OriginalLineIdx` values.
+- HS can exclude ClientId from FEA via `exclude_client_in_fea: true` (enabled in `configs/main_experiment.json`) because HS ground truth uses anonymized client identifiers.
+- For HS, AP accuracy in FEA can be computed only on extracted records via `field_metrics_on_extracted_only: true` (enabled in `configs/main_experiment.json`).
+- Field matching uses **partial-match success**: exact match, substring containment, or alphanumeric-normalized containment are all counted as correct.
+- Metrics reported:
+  - Event precision / recall / F1
+  - Field Extraction Accuracy (FEA)

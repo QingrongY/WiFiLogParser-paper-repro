@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+outputs/
+data/raw/*
+data/ground_truth/*
+!data/raw/.gitkeep
+!data/ground_truth/.gitkeep

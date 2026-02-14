@@ -1,0 +1,4 @@
+dataset,matching,event_f1,event_precision,event_recall,field_extraction_accuracy
+Wilson_50000,line_index,0.850760,0.759916,0.966274,0.948300
+University_50000,line_index,0.893711,0.807990,0.999781,0.999781
+HS_full,record,0.924915,0.999436,0.860736,0.930368

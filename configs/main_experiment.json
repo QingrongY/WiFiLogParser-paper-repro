@@ -1,0 +1,35 @@
+{
+  "llm": {
+    "primary_model": "google/gemini-2.0-flash",
+    "fallback_models": ["google/gemini-2.0-flash"],
+    "base_url": "https://openrouter.ai/api/v1",
+    "batch_size": 8,
+    "chunk_size": 50000,
+    "min_cluster_size": 2,
+    "disable_fallback": false,
+    "request_timeout_seconds": 60,
+    "max_retries": 1
+  },
+  "datasets": [
+    {
+      "name": "Wilson_50000",
+      "log_path": "data/raw/Wilson/Wilson_50000.log",
+      "gt_path": "data/ground_truth/Wilson/Wilson_gt.csv",
+      "matching": "line_index"
+    },
+    {
+      "name": "University_50000",
+      "log_path": "data/raw/University/University_50000.log",
+      "gt_path": "data/ground_truth/University/University_gt.csv",
+      "matching": "line_index"
+    },
+    {
+      "name": "HS_full",
+      "log_path": "data/raw/HS/HS_full.log",
+      "gt_path": "data/ground_truth/HS/HS_gt.csv",
+      "matching": "record",
+      "exclude_client_in_fea": true,
+      "field_metrics_on_extracted_only": true
+    }
+  ]
+}
