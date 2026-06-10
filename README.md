@@ -10,6 +10,9 @@ This repository packages the **WiFiLogParser main method** (from `WilDash_webapp
 - Dataset support (datasets are **not included** in the repo):
   - Wilson 50k, University 50k, HS full
   - Expected paths are documented in `data/README.md`
+  - **Anonymized sample data** for end-to-end pipeline smoke testing (about 100 lines per dataset, with device identifiers and SSIDs replaced by consistent randomized values) is hosted on Google Drive:
+    [https://drive.google.com/drive/folders/1Tdf3Jacw9rNVC4TjlOa8oPuJMEObn-Ye?usp=drive_link](https://drive.google.com/drive/folders/1Tdf3Jacw9rNVC4TjlOa8oPuJMEObn-Ye?usp=drive_link)
+  - The sample is sufficient to exercise the pipeline on each log format, but is too small to reproduce the full-dataset results reported in the paper.
 - Paper package from `WiFiLogParser___IEEE_access___V1.zip`:
   - `paper/WiFiLogParser_Main.tex`
   - `paper/references.bib`
