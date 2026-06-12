@@ -22,7 +22,7 @@ Assign a connect_flag based on the type of client-AP interaction:
 0 = All other events (e.g., DHCP events, connect failed, error, probe requests, etc.)
 
 Task 2:
-Extract a TEMPLATE for the entire log line (from beginning to end) while keeping fixed structure and delimiters.
+Extract a single TEMPLATE that covers all log lines from beginning to end, preserving fixed structure and delimiters.
 Replace all variable content spans with placeholders in the form {{{{name}}}}.
 
 We will compile the template into a regular expression as follows:
@@ -33,7 +33,7 @@ IMPORTANT RULES:
 - Do NOT output a raw regex. Output ONLY the literal template with {{{{placeholders}}}}.
 - Do NOT include any regex operators in the template (no .*?, no character classes, no anchors). Avoid backslashes unless a backslash appears literally in the log line.
 - The compiled regex must match the entire log line from beginning to end.
-- Extract only the client and AP involved in the actual event, not the logging source.
+- Extract only the client and AP involved in the event.
 - You may use field-named placeholders ONLY for the following fields:
   - year/month/date/time/ampm: timestamp of the log
   - client_ip/ap_ip: IP address of the client or AP

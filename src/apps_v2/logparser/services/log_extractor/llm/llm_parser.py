@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 import time
-from typing import Iterable, List, Tuple
+from typing import Iterable
 
 from ..common.api_clients import APIClient
 from ..common.config import LLMExtractorSettings
 from ..common.utils import count_message_tokens
+
+
+TEMPLATE_MAX_TOKENS = 2048
+TEMPLATE_REQUEST_TIMEOUT_SECONDS = 10.0
 
 
 class LLMParser:
@@ -21,7 +25,7 @@ class LLMParser:
             base_url=settings.base_url,
             api_key=settings.api_key or "",
             model=model,
-            timeout_seconds=settings.request_timeout_seconds,
+            timeout_seconds=TEMPLATE_REQUEST_TIMEOUT_SECONDS,
             max_retries=settings.max_retries,
         )
         self._token_count = 0
@@ -38,7 +42,7 @@ class LLMParser:
         messages = [{"role": "user", "content": full_input}]
 
         start = time.monotonic()
-        response = self.api_client.chat(messages, temperature=0.0, max_tokens=1024)
+        response = self.api_client.chat(messages, temperature=0.0, max_tokens=TEMPLATE_MAX_TOKENS)
         elapsed = time.monotonic() - start
 
         self._call_count += 1

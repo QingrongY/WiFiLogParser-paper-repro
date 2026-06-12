@@ -50,11 +50,14 @@ Edit `.env` and set at least:
 
 - `LLM_API_KEY`
 
-Optional but common for OpenRouter:
+The defaults match the production deployment at https://wildash.space:
 
-- `LLM_BASE_URL=https://openrouter.ai/api/v1`
-- `LLM_PRIMARY_MODEL=google/gemini-2.0-flash`
-- `LLM_FALLBACK_MODELS=google/gemini-2.0-flash` (repair uses same model as main parsing)
+- `LLM_BASE_URL=https://api.aimlapi.com/v1` (AIMLAPI; production provider)
+- `LLM_PRIMARY_MODEL=gemini-3.1-flash-lite` (non-thinking variant)
+- `LLM_FALLBACK_MODELS=gemini-3.1-flash-lite` (repair uses same model as main parsing)
+
+To use OpenRouter instead, set `LLM_BASE_URL=https://openrouter.ai/api/v1`
+and the provider-prefixed slug (e.g. `google/gemini-flash-lite-latest`).
 
 ## Run main experiments
 

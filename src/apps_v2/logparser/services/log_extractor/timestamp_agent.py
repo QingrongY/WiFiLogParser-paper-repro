@@ -73,6 +73,15 @@ class TimestampValidationReport:
     examples: dict[str, list[str]]
 
 
+_REPAIR_FORMAT_RULE = (
+    "date_format and time_format MUST be valid Python datetime.strptime directives. "
+    "Allowed: %Y %y %m %d %H %I %M %S %f %p %b %B %a %A %z %Z plus literal characters. "
+    "Do NOT use the strftime-only flags %-, %_, %0, %^, %# or width/locale modifiers — "
+    "write %m not %-m, %I not %-I; strptime already parses non-zero-padded values with the plain directives. "
+    "Respond with ONLY the JSON object — no explanation, no reasoning, no markdown."
+)
+
+
 class TimestampAgent:
     """Infer a timestamp extraction rule and split logs into (timestamp, content)."""
 
@@ -81,6 +90,7 @@ class TimestampAgent:
     SUCCESS_THRESHOLD = 0.90
     MAX_FIX_ATTEMPTS = 3
     MAX_TIMESTAMP_OFFSET = 200
+    REQUEST_TIMEOUT_SECONDS = 10.0
 
     def __init__(self, settings: LLMExtractorSettings):
         self.settings = settings
@@ -91,7 +101,7 @@ class TimestampAgent:
                     base_url=settings.base_url,
                     api_key=settings.api_key,
                     model=settings.primary_model,
-                    timeout_seconds=settings.request_timeout_seconds,
+                    timeout_seconds=self.REQUEST_TIMEOUT_SECONDS,
                     max_retries=settings.max_retries,
                 )
             except Exception:  # pragma: no cover - defensive
@@ -119,18 +129,21 @@ class TimestampAgent:
             raise ValueError("TimestampAgent: unable to select samples")
 
         attempt = 0
-        rule: TimestampRule | None = None
-        report: TimestampValidationReport | None = None
+        last_rule: TimestampRule | None = None
+        last_report: TimestampValidationReport | None = None
 
-        while True:
-            if attempt == 0:
-                candidate = self._infer_rule_with_llm(diverse_samples)
-            else:
-                if rule is None or report is None:
-                    raise ValueError("TimestampAgent: internal error during repair")
-                candidate = self._repair_rule_with_llm(diverse_samples, rule, report)
+        while attempt <= self.MAX_FIX_ATTEMPTS:
+            try:
+                if last_rule is None or last_report is None:
+                    candidate = self._infer_rule_with_llm(diverse_samples)
+                else:
+                    candidate = self._repair_rule_with_llm(diverse_samples, last_rule, last_report)
+                report = self._validate_rule(candidate, logs)
+            except Exception as exc:
+                logger.warning("TimestampAgent attempt %s produced no usable rule: %s", attempt + 1, exc)
+                attempt += 1
+                continue
 
-            report = self._validate_rule(candidate, logs)
             self.last_report = report
             logger.info(
                 "TimestampAgent validation attempt=%s success_rate=%.3f total=%s",
@@ -141,14 +154,16 @@ class TimestampAgent:
             if report.success_rate >= self.SUCCESS_THRESHOLD:
                 return candidate
 
-            rule = candidate
+            last_rule, last_report = candidate, report
             attempt += 1
-            if attempt > self.MAX_FIX_ATTEMPTS:
-                raise ValueError(
-                    "TimestampAgent: inferred rule did not reach required success rate "
-                    f"{self.SUCCESS_THRESHOLD:.0%}. Last={report.success_rate:.1%} "
-                    f"(success={report.success} total={report.total})."
-                )
+
+        if last_report is not None:
+            raise ValueError(
+                "TimestampAgent: inferred rule did not reach required success rate "
+                f"{self.SUCCESS_THRESHOLD:.0%}. Last={last_report.success_rate:.1%} "
+                f"(success={last_report.success} total={last_report.total})."
+            )
+        raise ValueError("TimestampAgent: no usable rule was produced after retries.")
 
     def split(self, line: str, rule: TimestampRule) -> tuple[datetime | None, str | None]:
         cleaned = _normalise_line(line)
@@ -216,7 +231,8 @@ class TimestampAgent:
                 "content": (
                     "You are a log timestamp extraction agent. Your job is to FIX the regex/format so that it "
                     "extracts the header timestamp across diverse log lines. Respond with JSON only. "
-                    "Output fields: regex (named groups date and time), date_format, time_format, has_year."
+                    "Output fields: regex (named groups date and time), date_format, time_format, has_year. "
+                    + _REPAIR_FORMAT_RULE
                 ),
             },
             {
@@ -244,12 +260,8 @@ class TimestampAgent:
     def _call_llm(self, messages: Sequence[dict]) -> dict:
         start = time.monotonic()
         try:
-            response = self._client.chat(messages, temperature=0.0, max_tokens=256)  # type: ignore[union-attr]
+            response = self._client.chat(messages, temperature=0.0)  # type: ignore[union-attr]
         except Exception as exc:  # pragma: no cover - network failure
-            from apps_v2.llm.budget import BudgetExceeded
-
-            if isinstance(exc, BudgetExceeded):
-                raise
             raise ValueError(f"TimestampAgent: LLM call failed: {exc}") from exc
         elapsed = time.monotonic() - start
         self.calls += 1

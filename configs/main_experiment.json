@@ -1,8 +1,8 @@
 {
   "llm": {
-    "primary_model": "google/gemini-2.0-flash",
-    "fallback_models": ["google/gemini-2.0-flash"],
-    "base_url": "https://openrouter.ai/api/v1",
+    "primary_model": "gemini-3.1-flash-lite",
+    "fallback_models": ["gemini-3.1-flash-lite"],
+    "base_url": "https://api.aimlapi.com/v1",
     "batch_size": 8,
     "chunk_size": 50000,
     "min_cluster_size": 2,

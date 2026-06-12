@@ -189,7 +189,11 @@ class LogExtractionRunner:
                 cluster.size,
             )
             cluster_start = time.monotonic()
-            result = self._process_cluster(cluster)
+            try:
+                result = self._process_cluster(cluster)
+            except Exception as exc:
+                logger.warning("LogExtractionRunner: cluster %s failed, skipping: %s", cluster.cluster_id, exc)
+                result = {"regex": None, "connect_flag": 0}
             logger.info(
                 "LogExtractionRunner: cluster %s finished in %.2fs",
                 cluster.cluster_id,
@@ -287,12 +291,8 @@ class LogExtractionRunner:
         try:
             self.timestamp_rule = self.timestamp_agent.infer_rule(raw_logs)
         except Exception as exc:
-            from apps_v2.llm.budget import BudgetExceeded
-
-            if isinstance(exc, BudgetExceeded):
-                raise
-            logger.exception("TimestampAgent failed to infer timestamp header rule")
-            raise ValueError("TimestampAgent failed to infer timestamp header rule") from exc
+            logger.exception("Timestamp inference failed")
+            raise ValueError(f"Could not determine the timestamp format for this log. {exc}") from exc
 
     def _process_cluster(self, cluster: Cluster) -> dict:
         template_examples = self._build_examples_text()

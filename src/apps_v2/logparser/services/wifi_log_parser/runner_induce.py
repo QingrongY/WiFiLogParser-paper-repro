@@ -104,7 +104,11 @@ class WiFiRunnerInduceMixin:
             )
 
             cluster_start = time.monotonic()
-            result = self._process_cluster(cluster)  # type: ignore[arg-type]
+            try:
+                result = self._process_cluster(cluster)  # type: ignore[arg-type]
+            except Exception as exc:
+                logger.warning("WiFiLogParserRunner: cluster %s failed, skipping: %s", cluster_id, exc)
+                result = {"template": None, "regex": None, "connect_flag": 0}
             processed_ids.add(cluster_id)
             elapsed = time.monotonic() - cluster_start
             logger.info("WiFiLogParserRunner: cluster %s finished in %.2fs", cluster_id, elapsed)

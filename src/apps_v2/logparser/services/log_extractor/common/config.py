@@ -56,7 +56,7 @@ def _read_models(name: str) -> Sequence[str]:
 
 
 def load_llm_settings() -> LLMExtractorSettings:
-    primary_model = str(os.getenv("LLM_PRIMARY_MODEL", "google/gemini-2.0-flash")).strip()
+    primary_model = str(os.getenv("LLM_PRIMARY_MODEL", "gemini-3.1-flash-lite")).strip()
     base_url = os.getenv("LLM_BASE_URL") or None
     api_key = os.getenv("LLM_API_KEY") or os.getenv("OPENAI_API_KEY") or None
 
