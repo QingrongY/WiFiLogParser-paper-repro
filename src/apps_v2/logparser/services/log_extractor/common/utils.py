@@ -106,3 +106,11 @@ def normalise_mac(value: str | None) -> str | None:
     if len(cleaned) == 12 and ":" not in cleaned:
         return ":".join(cleaned[i:i + 2] for i in range(0, 12, 2))
     return cleaned
+
+
+def looks_like_mac(value: str | None) -> bool:
+    if not value:
+        return False
+    cleaned = value.strip().replace("-", ":").replace(".", "").lower()
+    parts = cleaned.split(":") if ":" in cleaned else [cleaned[i:i + 2] for i in range(0, len(cleaned), 2)]
+    return len(parts) == 6 and all(len(p) == 2 and all(c in "0123456789abcdef" for c in p) for p in parts)

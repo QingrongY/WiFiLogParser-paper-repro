@@ -71,6 +71,7 @@ You are allowed to define named capture groups (?P<name>.*?) only for the follow
  - client_ip/ap_ip: IP address of the client or AP
  - client_mac/ap_mac: MAC address of the client or AP
  - client_name/ap_name: Name of the client or AP, may contain underscores and hyphens
+ - ssid: Wi-Fi network name, not an AP
 
 IMPORTANT RULES:
 - Use ONLY .*? for ALL content matching. Do not use \\d+, \\w+, [0-9]+, [a-zA-Z]+ or any other specific character classes.

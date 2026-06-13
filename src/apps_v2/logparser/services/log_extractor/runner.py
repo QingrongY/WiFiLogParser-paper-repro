@@ -11,7 +11,7 @@ import time
 import regex
 
 from .common.config import LLMExtractorSettings, load_llm_settings
-from .common.utils import normalise_mac, pick_first
+from .common.utils import looks_like_mac, normalise_mac, pick_first
 from .fallback.llm_repairer import LLMRepairer
 from .fallback.regex_validator import RegexValidator
 from .llm.batch_loader import BatchLoader
@@ -384,26 +384,38 @@ class LogExtractionRunner:
         return {key: value for key, value in match.groupdict().items() if value}
 
     def _extract_ap_identifier(self, fields: dict) -> str | None:
+        # AP rule: prefer the earliest occurrence (unsuffixed) within each form.
+        # Form priority: MAC > IP > name, but the MAC slot is accepted only if
+        # it actually parses as a MAC. This rejects device serials (e.g.
+        # "dev_001234567") that weaker LLMs sometimes mislabel as ap_mac.
+        ap_mac = pick_first(
+            fields.get("ap_mac"), fields.get("ap_mac_1"), fields.get("ap_mac_2"),
+        )
+        if looks_like_mac(ap_mac):
+            return normalise_mac(ap_mac)
         return pick_first(
-            fields.get("ap_mac"),
-            fields.get("ap_ip"),
-            fields.get("ap_name"),
+            fields.get("ap_ip"), fields.get("ap_ip_1"), fields.get("ap_ip_2"),
+            fields.get("ap_name"), fields.get("ap_name_1"), fields.get("ap_name_2"),
             fields.get("ap"),
             fields.get("ap_id"),
         )
 
     def _extract_client_identifier(self, fields: dict) -> str | None:
+        # Client rule: prefer the latest occurrence (highest-numbered variant).
+        # When a log line carries both a logging-source identifier and an event-
+        # participant identifier, the event participant typically appears later.
         mac = normalise_mac(
             pick_first(
-                fields.get("client_mac"),
-                fields.get("client_mac_1"),
                 fields.get("client_mac_2"),
+                fields.get("client_mac_1"),
+                fields.get("client_mac"),
             )
         )
         if mac:
             return mac
         return pick_first(
-            fields.get("client_name"),
+            fields.get("client_ip_2"), fields.get("client_ip_1"), fields.get("client_ip"),
+            fields.get("client_name_2"), fields.get("client_name_1"), fields.get("client_name"),
             fields.get("client"),
             fields.get("client_id"),
         )

@@ -39,6 +39,7 @@ IMPORTANT RULES:
   - client_ip/ap_ip: IP address of the client or AP
   - client_mac/ap_mac: MAC address of the client or AP
   - client_name/ap_name: Name of the client or AP, may contain underscores and hyphens
+  - ssid: Wi-Fi network name, not an AP
   - json_data: if logs contain JSON, capture the entire JSON
 - JSON handling: If logs contain JSON, replace the entire JSON with {{{{json_data}}}}.
 - When the same field appears again, use numbered suffixes: {{{{ap_name_1}}}}, {{{{client_ip_2}}}}.
