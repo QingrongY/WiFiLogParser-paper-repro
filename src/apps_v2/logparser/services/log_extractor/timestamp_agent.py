@@ -90,7 +90,7 @@ class TimestampAgent:
     SUCCESS_THRESHOLD = 0.90
     MAX_FIX_ATTEMPTS = 3
     MAX_TIMESTAMP_OFFSET = 200
-    REQUEST_TIMEOUT_SECONDS = 10.0
+    REQUEST_TIMEOUT_SECONDS = 60.0
 
     def __init__(self, settings: LLMExtractorSettings):
         self.settings = settings
@@ -103,6 +103,7 @@ class TimestampAgent:
                     model=settings.primary_model,
                     timeout_seconds=self.REQUEST_TIMEOUT_SECONDS,
                     max_retries=settings.max_retries,
+                    reasoning_effort=settings.reasoning_effort,
                 )
             except Exception:  # pragma: no cover - defensive
                 logger.exception("TimestampAgent: failed to initialise API client")
@@ -260,7 +261,7 @@ class TimestampAgent:
     def _call_llm(self, messages: Sequence[dict]) -> dict:
         start = time.monotonic()
         try:
-            response = self._client.chat(messages, temperature=0.0)  # type: ignore[union-attr]
+            response = self._client.chat(messages, temperature=0.0, max_tokens=8192)  # type: ignore[union-attr]
         except Exception as exc:  # pragma: no cover - network failure
             raise ValueError(f"TimestampAgent: LLM call failed: {exc}") from exc
         elapsed = time.monotonic() - start

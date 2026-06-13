@@ -8,8 +8,8 @@ from ..common.config import LLMExtractorSettings
 from ..common.utils import count_message_tokens
 
 
-TEMPLATE_MAX_TOKENS = 2048
-TEMPLATE_REQUEST_TIMEOUT_SECONDS = 10.0
+TEMPLATE_MAX_TOKENS = 8192
+TEMPLATE_REQUEST_TIMEOUT_SECONDS = 60.0
 
 
 class LLMParser:
@@ -27,6 +27,7 @@ class LLMParser:
             model=model,
             timeout_seconds=TEMPLATE_REQUEST_TIMEOUT_SECONDS,
             max_retries=settings.max_retries,
+            reasoning_effort=settings.reasoning_effort,
         )
         self._token_count = 0
         self._call_count = 0

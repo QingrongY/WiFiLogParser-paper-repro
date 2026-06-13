@@ -31,7 +31,12 @@ class RepairStats:
 
 
 class LLMRepairer:
-    """Fallback repairer that mirrors the original iterative fix strategy."""
+    """Single-attempt repair, optionally cycled across a fallback model list.
+
+    Each group is granted one repair attempt per fallback model. The inner
+    same-model retry loop is intentionally absent: empirically, a single shot
+    with diagnostic feedback either succeeds or stagnates.
+    """
 
     def __init__(self, models: Sequence[str], settings: LLMExtractorSettings, max_attempts: int = 3):
         self.models = [model for model in models if model]
@@ -170,4 +175,5 @@ Respond ONLY with JSON: {{"regex": "fixed pattern here"}}
             model=model,
             timeout_seconds=self.settings.request_timeout_seconds,
             max_retries=self.settings.max_retries,
+            reasoning_effort=self.settings.reasoning_effort,
         )

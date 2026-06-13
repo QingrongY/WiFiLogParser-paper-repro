@@ -19,6 +19,7 @@ class LLMExtractorSettings:
     min_cluster_size: int = 2
     request_timeout_seconds: float = 60.0
     max_retries: int = 1
+    reasoning_effort: str | None = None
 
     @property
     def effective_fallback_models(self) -> List[str]:
@@ -67,6 +68,7 @@ def load_llm_settings() -> LLMExtractorSettings:
     disable_fallback = _read_bool("LLM_DISABLE_FALLBACK", False)
     request_timeout_seconds = max(1.0, _read_float("LLM_REQUEST_TIMEOUT_SECONDS", 60.0))
     max_retries = max(0, _read_int("LLM_MAX_RETRIES", 1))
+    reasoning_effort = (os.getenv("LLM_REASONING_EFFORT") or "").strip().lower() or None
 
     return LLMExtractorSettings(
         primary_model=primary_model,
@@ -79,4 +81,5 @@ def load_llm_settings() -> LLMExtractorSettings:
         min_cluster_size=min_cluster_size,
         request_timeout_seconds=request_timeout_seconds,
         max_retries=max_retries,
+        reasoning_effort=reasoning_effort,
     )

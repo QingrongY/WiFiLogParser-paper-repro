@@ -29,7 +29,9 @@ class APIClient:
         model: str,
         timeout_seconds: float | None = None,
         max_retries: int | None = None,
+        reasoning_effort: str | None = None,
     ):
+        self._reasoning_effort = reasoning_effort or None
         if not api_key:
             raise ValueError("LLM API key must be configured before running the pipeline.")
         self.model = model
@@ -85,31 +87,23 @@ class APIClient:
                 session_quota_tokens=ctx.session_quota_tokens,
             )
 
+        create_kwargs: dict = {
+            'model': self.model,
+            'messages': messages_list,
+            'temperature': temperature,
+            'max_completion_tokens': max_tokens,
+        }
+        if self._reasoning_effort:
+            create_kwargs['reasoning_effort'] = self._reasoning_effort
         try:
             create = self._client.chat.completions.create
             if self._timeout_seconds is not None:
                 try:
-                    response = create(
-                        model=self.model,
-                        messages=messages_list,
-                        temperature=temperature,
-                        max_completion_tokens=max_tokens,
-                        timeout=self._timeout_seconds,
-                    )
+                    response = create(**create_kwargs, timeout=self._timeout_seconds)
                 except TypeError:
-                    response = create(
-                        model=self.model,
-                        messages=messages_list,
-                        temperature=temperature,
-                        max_completion_tokens=max_tokens,
-                    )
+                    response = create(**create_kwargs)
             else:
-                response = create(
-                    model=self.model,
-                    messages=messages_list,
-                    temperature=temperature,
-                    max_completion_tokens=max_tokens,
-                )
+                response = create(**create_kwargs)
         except Exception:
             if reservation is not None:
                 release_reservation(reservation)
