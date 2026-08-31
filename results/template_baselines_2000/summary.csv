@@ -1,0 +1,7 @@
+method,dataset,n_lines,gt_event_lines,macro_f1_3class,event_set_f1,strict_fea,line_index_style_fea,strict_ap_accuracy,strict_client_accuracy,partial_only_ap,partial_only_client,templates,event_templates,template_induction_calls,semantic_postprocessing_calls,total_calls,total_tokens
+LILAC+,Wilson,2000,390,0.762592,0.832780,0.741026,0.815385,0.548718,0.933333,0,0,177,38,177,236,413,253101
+LILAC+,University,2000,568,0.851557,0.775956,0.792254,0.861502,0.792254,0.792254,0,0,55,14,55,71,126,69955
+LILAC+,HS,2000,1041,0.719855,0.748114,0.960134,0.973423,0.920269,1.000000,0,0,23,20,23,43,66,33297
+LogBatcher+,Wilson,2000,390,0.737419,0.817469,0.464103,0.621368,0.000000,0.928205,0,0,87,30,87,135,222,182394
+LogBatcher+,University,2000,568,0.846110,0.770919,0.989437,0.989437,0.989437,0.989437,0,0,68,22,68,91,159,136189
+LogBatcher+,HS,2000,1041,0.584422,0.693076,0.967339,0.978226,0.966378,0.968300,0,0,73,69,136,145,281,180820

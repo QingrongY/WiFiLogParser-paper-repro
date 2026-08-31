@@ -1,0 +1,93 @@
+{
+  "status": "completed baseline rerun; not yet approved for manuscript",
+  "line_selection": "first 2000 physical lines",
+  "model": "gemini-3.1-flash-lite",
+  "temperature": 0.0,
+  "provider_endpoint_host": "https://api.aimlapi.com",
+  "upstream": {
+    "lilac_commit": "163d199f95ddf419044c53681f2b474a9c2d45ce",
+    "logbatcher_commit": "7d4768f1ec30a25c6581f4423c03643f6fbd266c"
+  },
+  "versioned_inputs": {
+    "classify_prompt_sha256": "f0912383994dd17296b29cd807fbd00976b620e67b89bd5de40866cea379fda0",
+    "field_prompt_sha256": "6dbd7ea82183e73011073fdeeb539ac4a465a289237498a507bedc40fd3583ec",
+    "upstream_manifest_sha256": "b026b4616e1b2c5b4b187111a31e41a41cf6644340d5ce252c6fc4765049c1d7",
+    "config_sha256": "9321ad9d1c9c6778bb4cae5a5c2c23e5710f3657a8baadf68498b2c3614d453e",
+    "runner_sha256": "3d3582d6b1c5e596842f6e900fad0750175018dfc52f5e3266ac7e458e9f8af5"
+  },
+  "datasets": {
+    "Wilson": {
+      "raw_prefix_sha256": "5003c08cc6f6c874204908604389cbe93d6b62ccf76244eb936a6fa6cd7a859d",
+      "ground_truth_sha256": "c0f8ed4b0d898c7713879370bb4224a3fb4b1c0478c7ed499c1f01c754926bf6"
+    },
+    "University": {
+      "raw_prefix_sha256": "ee4fe492788f0dcf68cd78eb2dd2f2aa84f98c2244bed50afd4ebb6a0f4461c4",
+      "ground_truth_sha256": "1a79fca1b1265b67d5fc2564386a1260249b382dd388e43ed602b3ef0cd21b5b"
+    },
+    "HS": {
+      "raw_prefix_sha256": "dfa10cfa9d7b03b77daa576cca640f038997da65e6d4b997f1e22cb55b3921fe",
+      "ground_truth_sha256": "1a540c4250f85107d22b052b7980f1b08fa6eb6dd02e7f1b92ec4764f891675e",
+      "alignment_audit": "historical rule reconstruction yields 26755 full-data events, exactly equal to the saved GT multiset on timestamp/event/AP"
+    }
+  },
+  "runs": {
+    "LILAC+/Wilson": {
+      "directory": "outputs/template_baselines/matched_prefix_2000_v2_20260830/lilac/Wilson",
+      "template_induction_source": "outputs/template_baselines/matched_prefix_2000_20260830/lilac/Wilson",
+      "template_induction_call_log_sha256": "8033502f01d960f618da0e043488af82b0e122e641adedf4b04328c3c5585444",
+      "llm_calls_sha256": "e16fa608db57aa75d3e341ed78c5085f5f41a9caaed192da9883def8f4e12c56",
+      "templates_sha256": "e06376a2174043ce2f7508ab5749df275022bdfeb0d2d92d1b45e024f31169a3",
+      "annotations_sha256": "171e832b0d91d397a772b25a190229b6929dc75f035b9d6c1f3b2180df22941c",
+      "predictions_sha256": "2588ab4d507d0dd87efb70d66a5ed1dd11e52e74aacb2fc8af4b2fc938a6bfc8",
+      "metrics_sha256": "6a59463b539a9f80acb1e145336947112f8be630abf6d211db091133665c3793",
+      "metadata_sha256": "ec0d6f128917ffb5196b2dcea4f177b1e62d22610d793b39165106a2575ea33b"
+    },
+    "LILAC+/University": {
+      "directory": "outputs/template_baselines/matched_prefix_2000_v2_20260830/lilac/University",
+      "template_induction_source": "outputs/template_baselines/matched_prefix_2000_20260830/lilac/University",
+      "template_induction_call_log_sha256": "813393852f97ff1fe6bbb4fdcdc5bb3500b65d222d2fa48976dcd3e607ab1d7e",
+      "llm_calls_sha256": "a1e50dfe4e29bf93f6c665478de666ceb0f66ce83234072b21b034562ad1dfa5",
+      "templates_sha256": "52cb144561f5cb60f8288f511707519328d54366d206d41ac3e41de9f47e036a",
+      "annotations_sha256": "986a19570c6990ffbdcd538a8192614ca3c7e8ff5a141eb33b52a129a03bf85f",
+      "predictions_sha256": "d540fccec1f29aea80f1d620675ef312e057430651d162a88e03cd569621419c",
+      "metrics_sha256": "84a4144956e632c99688738228be1974c6f7809208fac886d8d0e52908bb80a0",
+      "metadata_sha256": "e167f3ef01c912227179332fc2fb8e368cac9091b7c7fee8a5101a267b267210"
+    },
+    "LILAC+/HS": {
+      "directory": "outputs/template_baselines/matched_prefix_2000_v2_20260830/lilac/HS",
+      "llm_calls_sha256": "e9d45d4ca2386da9afca496bb6be2a92636109dc5c87070251570c43a5eed614",
+      "templates_sha256": "ea36f54407f5975efe1a8a87222816b4665987fa670f57d5f7f724d91916d7ab",
+      "annotations_sha256": "c2a67a5d136a22ca8f8511542d69eb9656c3c5ecab3f8a9a11bfe917f20820f1",
+      "predictions_sha256": "b70b730e928fadce94bc6e9e342bc8d46a5c70934f06ef266f4901179abcfb63",
+      "metrics_sha256": "3f40fcb87dc6ff84e91d77cd1cd19fb95af590db9635e7d659f1ce1f4d0c7c14",
+      "metadata_sha256": "a15c9f7a0894a25e50709c30aafda44fe70e68b1fd0e228f503e74aab974f159"
+    },
+    "LogBatcher+/Wilson": {
+      "directory": "outputs/template_baselines/logbatcher_matched_prefix_2000_20260830/logbatcher/Wilson",
+      "llm_calls_sha256": "e89c5841412b3218c067a0097cb96ad49690f4a3c9a911e63a811cc6d97a8f8f",
+      "templates_sha256": "93305937cea1a8300749dd37285090ab2839d54f7f38d761402325aeb762b182",
+      "annotations_sha256": "87fdbd86e5881cdcd3e2049682b189e753651a6cb6cf737714d73ba9328bf33d",
+      "predictions_sha256": "588bf298965b618aa06205c3ae035989f3c1f9a2d6f1692baced31564cac75f1",
+      "metrics_sha256": "bf6efabc3b4bf434ab81f58d497297d83956a10bb00bf4157cd5395d48459a77",
+      "metadata_sha256": "8badbeac3a67c221b065687b284483390318a093fefe23d19a88fdcecf6c9604"
+    },
+    "LogBatcher+/University": {
+      "directory": "outputs/template_baselines/logbatcher_matched_prefix_2000_20260830/logbatcher/University",
+      "llm_calls_sha256": "18ee87041e7b1f43538af7a8fb9e38a56b03a26d2340097b472304e8877b9c8d",
+      "templates_sha256": "6fa8d86f187140447052fccf8c60ebd7d2b9d8dd19141a9378b90dc9333080b0",
+      "annotations_sha256": "e1a425d89e19f3a9792bf6f46087e5d876d8900361bd7451f864a2916122a44e",
+      "predictions_sha256": "c4539f8aa2554c14bd2883c701d40c4dc1d42f5d6f3eaa5fc91c22e2f2056541",
+      "metrics_sha256": "41db3b4d22cbe3eb254ae0e575bb6447cb1f0f0c15c10a487b52566d712b63c2",
+      "metadata_sha256": "fe4265a7f1d9cf3a8e6464f23aeecb24e63501938dffa64848d60ed8ad3bb324"
+    },
+    "LogBatcher+/HS": {
+      "directory": "outputs/template_baselines/logbatcher_hs_matched_prefix_2000_20260830/logbatcher/HS",
+      "llm_calls_sha256": "a390b03f8db4b2a89d218788eaa7771a64fb5714a8ae9ab4688cc4f30345618a",
+      "templates_sha256": "856e825f11ea073685745c06c54b93a5252ed84123af98fe047a58ea3dc86dbd",
+      "annotations_sha256": "60369a49f67fc3a2c90f26fc77c3554c11ef8619b03f61b678a3ba537edde8a5",
+      "predictions_sha256": "f89bfe953b717de1a70043e51a3cf0b61464337216ff2544f8efd210edca544b",
+      "metrics_sha256": "bdeaf42ba363ed12499bff2ecf044847e290971b058dd2f74a5cf850ae110c63",
+      "metadata_sha256": "443ad328b05404ef75ee8fb511014a9bbd86e17add40bd46694fc6830bcb0cd7"
+    }
+  }
+}

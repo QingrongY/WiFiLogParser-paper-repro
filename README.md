@@ -89,6 +89,21 @@ Run a subset:
 python3 scripts/run_main_experiments.py --dataset Wilson_50000 --dataset HS_full
 ```
 
+## Run the matched template baselines
+
+The revision package also includes a reproducible 2,000-line implementation of
+LILAC+ and LogBatcher+. Their official repositories are pinned to exact commits;
+the shared two-stage semantic post-processing prompts, configuration, runner,
+aggregate results, and evidence hashes are versioned here. See
+[`baselines/README.md`](baselines/README.md) and
+[`results/template_baselines_2000/`](results/template_baselines_2000/).
+
+```bash
+./scripts/prepare_template_baselines.sh
+.venv/bin/python scripts/run_template_baselines.py \
+  --config configs/template_baselines_2000.json
+```
+
 ## Outputs
 
 Each run writes to `outputs/<run_id>/`:

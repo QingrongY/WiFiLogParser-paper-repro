@@ -1,0 +1,12 @@
+{
+  "lilac": {
+    "repository": "https://github.com/logpai/LILAC.git",
+    "commit": "163d199f95ddf419044c53681f2b474a9c2d45ce",
+    "license": "GPL-3.0"
+  },
+  "logbatcher": {
+    "repository": "https://github.com/LogIntelligence/LogBatcher.git",
+    "commit": "7d4768f1ec30a25c6581f4423c03643f6fbd266c",
+    "license": "MIT"
+  }
+}

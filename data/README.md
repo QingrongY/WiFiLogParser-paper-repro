@@ -13,7 +13,9 @@ data/
   raw/
     Wilson/
       Wilson_50000.log
+      Wilson_full.log
     University/
+      University_2000.log
       University_50000.log
     HS/
       HS_full.log
@@ -25,6 +27,10 @@ data/
     HS/
       HS_gt.csv
 ```
+
+The main-experiment config uses Wilson/University 50k and HS full. The matched
+template-baseline config uses the first 2,000 physical lines of `Wilson_full.log`
+and `HS_full.log`, plus the exact prefix file `University_2000.log`.
 
 If you use different filenames/paths, update `configs/main_experiment.json`.
 

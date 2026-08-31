@@ -5,3 +5,11 @@ scikit-learn>=1.4.0
 regex>=2023.12.25
 tiktoken>=0.5.2
 python-dotenv>=1.0.1
+# Dependencies imported by the pinned LILAC and LogBatcher upstream code.
+together>=1.2.9
+tenacity>=9.0.0
+tqdm>=4.66.5
+nltk>=3.9.1
+natsort>=8.4.0
+textdistance>=4.5.0
+chardet>=5.2.0

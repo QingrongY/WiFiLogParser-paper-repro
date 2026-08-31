@@ -1,0 +1,48 @@
+{
+  "experiment_name": "matched_prefix_2000",
+  "line_limit": 2000,
+  "llm": {
+    "model": "gemini-3.1-flash-lite",
+    "temperature": 0.0,
+    "request_timeout_seconds": 60,
+    "max_retries": 2
+  },
+  "template_parsers": {
+    "lilac": {
+      "shot": 0,
+      "example_size": 0,
+      "selection_method": "LILAC"
+    },
+    "logbatcher": {
+      "batch_size": 10,
+      "chunk_size": 2000,
+      "clustering_method": "dbscan",
+      "sampling_method": "dpp"
+    }
+  },
+  "postprocessing": {
+    "representative_lines": 3,
+    "regex_repair_attempts": 1
+  },
+  "datasets": [
+    {
+      "name": "Wilson",
+      "log_path": "data/raw/Wilson/Wilson_full.log",
+      "gt_path": "data/ground_truth/Wilson/Wilson_gt.csv",
+      "matching": "line_index"
+    },
+    {
+      "name": "University",
+      "log_path": "data/raw/University/University_2000.log",
+      "gt_path": "data/ground_truth/University/University_gt.csv",
+      "matching": "line_index"
+    },
+    {
+      "name": "HS",
+      "log_path": "data/raw/HS/HS_full.log",
+      "gt_path": "data/ground_truth/HS/HS_gt.csv",
+      "matching": "historical_rule_line_index",
+      "gt_loader": "hs_historical_rule"
+    }
+  ]
+}
