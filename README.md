@@ -126,3 +126,7 @@ Reference (aggregated) metrics from the authors' run are provided in `results/re
 - Metrics reported:
   - Event precision / recall / F1
   - Field Extraction Accuracy (FEA)
+
+## License
+
+The software in this repository is released under the MIT License. The datasets are not distributed under this license.
