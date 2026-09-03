@@ -23,8 +23,9 @@ because they can contain identifiers and are not distributed. The aggregate
 results here contain no raw log lines or identifiers.
 
 The default run produced F1 0.894345, FEA 1.000000, 82 LLM calls, 154,075
-tokens, and a runtime of 91.392 s. This is the canonical University 50,000-line
-WiFiLogParser result used in Tables 5 and 8 and at N=50,000 in Fig. 7.
+tokens, and a runtime of 91.392 s. This controlled default result supplies the
+University WiFiLogParser accuracy values in Tables 5 and 8. Fig. 7 reports a
+separate scaling experiment, including its own N=50,000 point.
 
 Run the complete suite with:
 

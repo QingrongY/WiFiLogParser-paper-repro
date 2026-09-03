@@ -6,6 +6,12 @@ physical lines. Both methods use their pinned official implementation for
 generic template induction and the same versioned two-stage semantic
 post-processing in `baselines/prompts/`.
 
+This 2,000-line experiment was performed later as an independent
+reproducibility rerun. The two prompt files were also later organized and
+versioned in this repository, but their text is the same as the prompts used to
+produce the LILAC+ and LogBatcher+ results reported in Table 5. Results from
+this later 2,000-line rerun are not used in the manuscript.
+
 `summary.csv` intentionally reports two event metrics and two field diagnostics:
 
 - `macro_f1_3class` is the definition written in the submitted manuscript:
@@ -19,9 +25,7 @@ post-processing in `baselines/prompts/`.
   partial identifier matching, matching the line-index evaluator's structure.
   It is not the special HS record-matching configuration.
 
-No number in this directory has yet been approved for the manuscript. The
-metric definition and the matched WiFiLogParser/Direct LLM rows must be resolved
-first.
+No result in this directory is used in the manuscript.
 
 Detailed outputs stay under ignored `outputs/` because they contain raw log
 content or identifiers and the datasets are not redistributable. The evidence

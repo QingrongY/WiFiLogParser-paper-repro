@@ -1,0 +1,13 @@
+ORIGINAL BROKEN REGEX:
+{broken_regex}
+
+FAILED LOG:
+{failed_log}
+
+The regex failed near:
+{failure_info}
+
+You must fix the regex to match ALL samples below without changing named capture group semantics.
+{samples_text}
+
+Respond ONLY with JSON: {"regex": "fixed pattern here"}

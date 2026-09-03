@@ -89,6 +89,15 @@ Run a subset:
 python3 scripts/run_main_experiments.py --dataset Wilson_50000 --dataset HS_full
 ```
 
+## Complete experimental prompts
+
+The complete prompt templates used by the timestamp-header agent,
+WiFiLogParser content parser, self-repair mechanism, Direct LLM baseline, and
+the two LILAC+/LogBatcher+ post-processing stages are indexed in
+[`prompts/`](prompts/). The two baseline prompt files were later organized and
+versioned in this repository, but their text is the same as the prompts used to
+produce the LILAC+ and LogBatcher+ results reported in Table 5.
+
 ## Run the matched template baselines
 
 The revision package also includes a reproducible 2,000-line implementation of

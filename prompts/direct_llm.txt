@@ -1,0 +1,10 @@
+Task definition
+ You will receive log lines. For each log line, identify the connection
+event type (connection, disconnection, or others). Then extract the
+following fields if present: ap_name, client_name, ap_ip, client_ip,
+ap_mac, client_mac.
+Input
+ {n input samples}
+Output style constraints
+ CSV with header:
+ap_name,client_name,ap_ip,client_ip,ap_mac,client_mac,event
