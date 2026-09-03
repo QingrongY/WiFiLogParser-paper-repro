@@ -115,6 +115,8 @@ Each run writes to `outputs/<run_id>/`:
   - `metrics.json`
 
 Reference (aggregated) metrics from the authors' run are provided in `results/reference_metrics_main.csv`.
+Matched-scale Direct LLM aggregate results used in the revised Table 5 are
+provided in [`results/direct_llm_matched_scale/`](results/direct_llm_matched_scale/).
 
 ## Notes on evaluation
 

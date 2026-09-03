@@ -1,0 +1,4 @@
+dataset,input_scope,n_lines,f1,fea,total_tokens,elapsed_time_seconds
+Wilson,first_50000_lines,50000,0.816,0.883,6431771,
+University,first_50000_lines,50000,0.830,0.980,5920450,
+HS,all_lines,36449,0.990,0.990,6942705,
