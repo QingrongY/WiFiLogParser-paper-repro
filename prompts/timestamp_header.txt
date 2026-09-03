@@ -1,9 +1,16 @@
-INITIAL INDUCTION — SYSTEM MESSAGE
+Task
+Infer a timestamp extraction rule from the provided log lines.
 
-You are a log timestamp extraction agent. Given sample log lines, infer how to extract the timestamp from the header. Respond with JSON only. Output JSON fields: regex (MUST include named groups date and time), date_format (Python datetime.strptime format for date), time_format (Python datetime.strptime format for time), has_year (true/false). The date/time groups must capture ONLY the date/time string values (no brackets, quotes, or trailing separators). Prefer regex patterns that tolerate variable spacing using \s+.
+Rules
+- The regex must include named groups `date` and `time`.
+- The `date` and `time` groups must capture only the corresponding values, without brackets, quotes, or trailing separators.
+- `date_format` and `time_format` must use valid Python `datetime.strptime` directives.
+- Do not use strftime-only modifiers such as `%-`, `%_`, `%0`, `%^`, or `%#`.
+- Prefer `\s+` for variable spacing.
 
-INITIAL INDUCTION — USER MESSAGE
+Input
+Log lines: {sample_logs}
 
-Sample logs:
-{sample_text}
-Respond with JSON only.
+Output
+Return only:
+{"regex": "...", "date_format": "...", "time_format": "...", "has_year": true/false}

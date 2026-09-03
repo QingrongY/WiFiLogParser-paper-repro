@@ -1,9 +1,9 @@
 # Complete experimental prompts
 
 This directory indexes the complete prompt templates used by every LLM-based
-component reported in the paper. Runtime log samples, validation diagnostics,
-and parser examples replace the brace-delimited placeholders shown in these
-templates.
+component reported in the paper. Runtime log samples, induced rules, validation
+diagnostics, and templates replace the brace-delimited placeholders shown in
+these templates.
 
 | Experimental component | Prompt text | Implementation source |
 | --- | --- | --- |

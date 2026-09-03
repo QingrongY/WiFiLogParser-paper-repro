@@ -19,6 +19,44 @@ from .common.config import LLMExtractorSettings
 logger = logging.getLogger(__name__)
 
 
+TIMESTAMP_HEADER_PROMPT = r"""Task
+Infer a timestamp extraction rule from the provided log lines.
+
+Rules
+- The regex must include named groups `date` and `time`.
+- The `date` and `time` groups must capture only the corresponding values, without brackets, quotes, or trailing separators.
+- `date_format` and `time_format` must use valid Python `datetime.strptime` directives.
+- Do not use strftime-only modifiers such as `%-`, `%_`, `%0`, `%^`, or `%#`.
+- Prefer `\s+` for variable spacing.
+
+Input
+Log lines: {sample_logs}
+
+Output
+Return only:
+{"regex": "...", "date_format": "...", "time_format": "...", "has_year": true/false}"""
+
+
+TIMESTAMP_HEADER_REFINEMENT_PROMPT = r"""Task
+Refine the current timestamp extraction rule based on the provided log lines.
+
+Rules
+- The regex must include named groups `date` and `time`.
+- The `date` and `time` groups must capture only the corresponding values, without brackets, quotes, or trailing separators.
+- `date_format` and `time_format` must use valid Python `datetime.strptime` directives.
+- Do not use strftime-only modifiers such as `%-`, `%_`, `%0`, `%^`, or `%#`.
+- Prefer `\s+` for variable spacing.
+
+Input
+Current rule: {current_rule}
+Successful log lines: {successful_logs}
+Failed log lines: {failed_logs}
+
+Output
+Return only:
+{"regex": "...", "date_format": "...", "time_format": "...", "has_year": true/false}"""
+
+
 @dataclass(frozen=True)
 class TimestampRule:
     pattern: re.Pattern[str]
@@ -71,15 +109,6 @@ class TimestampValidationReport:
     ts_too_far: int
     empty_content: int
     examples: dict[str, list[str]]
-
-
-_REPAIR_FORMAT_RULE = (
-    "date_format and time_format MUST be valid Python datetime.strptime directives. "
-    "Allowed: %Y %y %m %d %H %I %M %S %f %p %b %B %a %A %z %Z plus literal characters. "
-    "Do NOT use the strftime-only flags %-, %_, %0, %^, %# or width/locale modifiers — "
-    "write %m not %-m, %I not %-I; strptime already parses non-zero-padded values with the plain directives. "
-    "Respond with ONLY the JSON object — no explanation, no reasoning, no markdown."
-)
 
 
 class TimestampAgent:
@@ -138,7 +167,7 @@ class TimestampAgent:
                 if last_rule is None or last_report is None:
                     candidate = self._infer_rule_with_llm(diverse_samples)
                 else:
-                    candidate = self._repair_rule_with_llm(diverse_samples, last_rule, last_report)
+                    candidate = self._repair_rule_with_llm(last_rule, last_report)
                 report = self._validate_rule(candidate, logs)
             except Exception as exc:
                 logger.warning("TimestampAgent attempt %s produced no usable rule: %s", attempt + 1, exc)
@@ -187,31 +216,13 @@ class TimestampAgent:
 
     def _infer_rule_with_llm(self, sample_logs: Sequence[str]) -> TimestampRule:
         sample_text = "\n".join(f"Line {idx + 1}: {line}" for idx, line in enumerate(sample_logs))
-        messages = [
-            {
-                "role": "system",
-                "content": (
-                    "You are a log timestamp extraction agent. Given sample log lines, infer how to extract the "
-                    "timestamp from the header. Respond with JSON only. "
-                    "Output JSON fields: regex (MUST include named groups date and time), date_format (Python "
-                    "datetime.strptime format for date), time_format (Python datetime.strptime format for time), "
-                    "has_year (true/false). "
-                    "The date/time groups must capture ONLY the date/time string values (no brackets, quotes, "
-                    "or trailing separators). "
-                    "Prefer regex patterns that tolerate variable spacing using \\s+."
-                ),
-            },
-            {
-                "role": "user",
-                "content": f"Sample logs:\n{sample_text}\nRespond with JSON only.",
-            },
-        ]
+        prompt = TIMESTAMP_HEADER_PROMPT.replace("{sample_logs}", sample_text)
+        messages = [{"role": "user", "content": prompt}]
         data = self._call_llm(messages)
         return _build_rule_from_json(data)
 
     def _repair_rule_with_llm(
         self,
-        sample_logs: Sequence[str],
         rule: TimestampRule,
         report: TimestampValidationReport,
     ) -> TimestampRule:
@@ -224,37 +235,19 @@ class TimestampAgent:
             failure_blocks.append(f"{key}:\n" + "\n".join(f"- {line}" for line in examples[:5]))
         failures_text = "\n\n".join(failure_blocks) if failure_blocks else "(no examples)"
 
-        sample_text = "\n".join(f"- {line}" for line in sample_logs)
         ok_text = "\n".join(f"- {line}" for line in success_examples)
-        messages = [
-            {
-                "role": "system",
-                "content": (
-                    "You are a log timestamp extraction agent. Your job is to FIX the regex/format so that it "
-                    "extracts the header timestamp across diverse log lines. Respond with JSON only. "
-                    "Output fields: regex (named groups date and time), date_format, time_format, has_year. "
-                    + _REPAIR_FORMAT_RULE
-                ),
-            },
-            {
-                "role": "user",
-                "content": (
-                    "Current rule:\n"
-                    f"regex: {rule.pattern.pattern}\n"
-                    f"date_format: {rule.date_strftime}\n"
-                    f"time_format: {rule.time_strftime}\n"
-                    f"has_year: {str(rule.has_year).lower()}\n\n"
-                    f"Validation: success_rate={report.success_rate:.3f} success={report.success} total={report.total}\n\n"
-                    "Diverse sample set:\n"
-                    f"{sample_text}\n\n"
-                    "Examples that should parse correctly:\n"
-                    f"{ok_text or '(none)'}\n\n"
-                    "Failure examples (grouped):\n"
-                    f"{failures_text}\n\n"
-                    "Return JSON only: {\"regex\": ..., \"date_format\": ..., \"time_format\": ..., \"has_year\": true/false}"
-                ),
-            },
-        ]
+        current_rule = (
+            f"regex: {rule.pattern.pattern}\n"
+            f"date_format: {rule.date_strftime}\n"
+            f"time_format: {rule.time_strftime}\n"
+            f"has_year: {str(rule.has_year).lower()}\n"
+            f"matching_coverage: {report.success_rate:.3f}"
+        )
+        prompt = TIMESTAMP_HEADER_REFINEMENT_PROMPT
+        prompt = prompt.replace("{current_rule}", current_rule)
+        prompt = prompt.replace("{successful_logs}", ok_text or "(none)")
+        prompt = prompt.replace("{failed_logs}", failures_text)
+        messages = [{"role": "user", "content": prompt}]
         data = self._call_llm(messages)
         return _build_rule_from_json(data)
 

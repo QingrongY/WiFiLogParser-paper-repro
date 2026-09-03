@@ -28,7 +28,8 @@ class PostProcessor:
             try:
                 json_str = match.group(1) if "```" in pattern else match.group(0)
                 data = json.loads(json_str)
-                return data.get("regex"), int(data.get("connect_flag", 0))
+                event_label = data.get("event_label", data.get("connect_flag", 0))
+                return data.get("regex"), int(event_label)
             except (json.JSONDecodeError, TypeError, ValueError):
                 continue
         return self._direct_extract(response)
@@ -48,7 +49,7 @@ class PostProcessor:
                         regex_pattern = json.loads(f'"{raw_regex}"')
                     except json.JSONDecodeError:
                         regex_pattern = raw_regex
-        flag_match = re.search(r'"connect_flag"\s*:\s*(-?\d+)', response)
+        flag_match = re.search(r'"(?:event_label|connect_flag)"\s*:\s*(-?\d+)', response)
         connect_flag = int(flag_match.group(1)) if flag_match else 0
         return regex_pattern, connect_flag
 

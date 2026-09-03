@@ -1,10 +1,17 @@
-Task definition
- You will receive log lines. For each log line, identify the connection
-event type (connection, disconnection, or others). Then extract the
-following fields if present: ap_name, client_name, ap_ip, client_ip,
-ap_mac, client_mac.
+Task
+Parse each log line into a mobility record.
+
+Rules
+- Set `event_label` to 1 for connection or connection attempts, including authentication, association, IP detection, and reconnection.
+- Set `event_label` to -1 for disconnection events.
+- Set `event_label` to 0 for all other events, including DHCP, failed connections, errors, and probe requests.
+- Extract `ap_name`, `client_name`, `ap_ip`, `client_ip`, `ap_mac`, and `client_mac` when present.
+- Extract only the client and AP involved in the event, not the logging source.
+- For JSON content, extract only relevant AP and client values and ignore unrelated key-value pairs.
+
 Input
- {n input samples}
-Output style constraints
- CSV with header:
-ap_name,client_name,ap_ip,client_ip,ap_mac,client_mac,event
+Log lines: {log_lines}
+
+Output
+Return only CSV with the header:
+ap_name,client_name,ap_ip,client_ip,ap_mac,client_mac,event_label

@@ -424,7 +424,7 @@ def _postprocess_templates(
         examples = [line for _, line in representatives]
         examples_text = "\n".join(f"- `{line}`" for line in examples)
         classification_prompt = _render_prompt(
-            "classify_template.txt", template=template, examples=examples_text
+            "classify_template.txt", template=template, sample_logs=examples_text
         )
         response = llm.complete(
             [{"role": "user", "content": classification_prompt}],
@@ -437,7 +437,7 @@ def _postprocess_templates(
         )
         try:
             parsed = _parse_json_object(response)
-            event = _normalize_event(parsed.get("event"))
+            event = _normalize_event(parsed.get("event_label", parsed.get("event")))
             reason = str(parsed.get("reason", ""))
         except Exception as exc:
             event, reason = "other", f"invalid classification response: {exc}"
@@ -448,9 +448,9 @@ def _postprocess_templates(
         if event != "other":
             field_prompt = _render_prompt(
                 "extract_fields.txt",
-                event=event,
+                event_label="1" if event == "connect" else "-1",
                 template=template,
-                examples=examples_text,
+                sample_logs=examples_text,
             )
             for attempt in range(repair_attempts + 1):
                 prompt = field_prompt

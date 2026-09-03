@@ -1,13 +1,17 @@
-ORIGINAL BROKEN REGEX:
-{broken_regex}
+Task
+Fix the current regex so that it matches all provided log lines.
 
-FAILED LOG:
-{failed_log}
+Rules
+- Replace variable content with `.*?` while preserving fixed structure and delimiters.
+- The regex must match the entire log line.
+- Preserve all named capture groups and their semantics.
+- For JSON content, capture only relevant AP and client values with the existing named groups, and use `.*?` to skip unrelated key-value pairs.
 
-The regex failed near:
-{failure_info}
+Input
+Current regex: {current_regex}
+Failure details: {failure_info}
+Log lines: {sample_logs}
 
-You must fix the regex to match ALL samples below without changing named capture group semantics.
-{samples_text}
-
-Respond ONLY with JSON: {"regex": "fixed pattern here"}
+Output
+Return only:
+{"regex": "..."}

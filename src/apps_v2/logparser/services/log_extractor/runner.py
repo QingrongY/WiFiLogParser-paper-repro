@@ -295,16 +295,14 @@ class LogExtractionRunner:
             raise ValueError(f"Could not determine the timestamp format for this log. {exc}") from exc
 
     def _process_cluster(self, cluster: Cluster) -> dict:
-        template_examples = self._build_examples_text()
         sample_logs = self.batch_loader.sample_cluster(cluster, batch_size=min(self.settings.batch_size, cluster.size))
         logger.info(
-            "LogExtractionRunner: invoking LLM for cluster %s sample_size=%s examples=%s",
+            "LogExtractionRunner: invoking LLM for cluster %s sample_size=%s",
             cluster.cluster_id,
             len(sample_logs),
-            bool(template_examples),
         )
         start_time = time.monotonic()
-        raw_output = self.parser.parse_batch(sample_logs, template_examples)
+        raw_output = self.parser.parse_batch(sample_logs)
         logger.info(
             "LogExtractionRunner: LLM finished cluster %s in %.2fs",
             cluster.cluster_id,
@@ -318,7 +316,7 @@ class LogExtractionRunner:
                 "LogExtractionRunner: retrying primary model for cluster %s due to missing regex",
                 cluster.cluster_id,
             )
-            retry_output = self.parser.parse_batch(sample_logs, template_examples)
+            retry_output = self.parser.parse_batch(sample_logs)
             if retry_output:
                 retry_regex, retry_flag = self.postprocessor.process_output(retry_output)
                 if retry_regex:
@@ -353,20 +351,6 @@ class LogExtractionRunner:
             return {"regex": repaired_regex, "connect_flag": repaired_flag}
 
         return {"regex": regex_pattern, "connect_flag": connect_flag}
-
-    def _build_examples_text(self) -> str:
-        examples = []
-        for cluster_id, (regex_pattern, connect_flag, sample_log) in self.cache_manager.cluster_to_regex.items():
-            if not regex_pattern:
-                continue
-            examples.append(
-                f"Log: `{sample_log}`\nregex: \"{regex_pattern}\"\nconnect_flag: {connect_flag}"
-            )
-            if len(examples) >= self.parser.successful_examples:
-                break
-        if not examples:
-            return ""
-        return "\n\nSUCCESSFUL EXAMPLES:\n" + "\n\n".join(examples)
 
     def _extract_fields(self, regex_pattern: str | None, preprocessed_log: str) -> dict:
         if not regex_pattern:

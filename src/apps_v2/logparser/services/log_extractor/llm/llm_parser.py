@@ -11,6 +11,27 @@ from ..common.utils import count_message_tokens
 TEMPLATE_MAX_TOKENS = 8192
 TEMPLATE_REQUEST_TIMEOUT_SECONDS = 60.0
 
+CONTENT_PARSING_PROMPT = r"""Task
+Classify the client-AP event and generate a regex that matches the provided log lines.
+
+Rules
+- Set `event_label` to 1 for connection or connection attempts, including authentication, association, IP detection, and reconnection.
+- Set `event_label` to -1 for disconnection events.
+- Set `event_label` to 0 for all other events, including DHCP, failed connections, errors, and probe requests.
+- Replace variable content with `.*?` while preserving fixed structure and delimiters.
+- The regex must match the entire log line.
+- Use named capture groups only for `client_ip`, `ap_ip`, `client_mac`, `ap_mac`, `client_name`, `ap_name`, and `ssid`.
+- Extract only the client and AP involved in the event, not the logging source.
+- Use numbered suffixes when the same field appears more than once.
+- For JSON content, capture only relevant AP and client values with the appropriate named groups, and use `.*?` to skip unrelated key-value pairs, e.g., `\{.*?"ap":"(?P<ap_name>.*?)".*?"client":"(?P<client_mac>.*?)".*?\}`.
+
+Input
+Log lines: {sample_logs}
+
+Output
+Return only:
+{"regex": "...", "event_label": 1/-1/0}"""
+
 
 class LLMParser:
     """LLM client wrapper with telemetry tracking."""
@@ -33,13 +54,16 @@ class LLMParser:
         self._call_count = 0
         self._total_time = 0.0
 
-    def parse_batch(self, batch_logs: Iterable[str], examples_text: str) -> str | None:
+    def parse_batch(self, batch_logs: Iterable[str], examples_text: str = "") -> str | None:
         logs = list(batch_logs)
         if not logs:
             return None
-        instruction = self._build_instruction(examples_text)
         logs_text = "\n".join(f"Log[{i + 1}]: `{log}`" for i, log in enumerate(logs))
-        full_input = f"{instruction}\n\nLogs to analyze:\n{logs_text}"
+        instruction = self._build_instruction(examples_text)
+        if "{sample_logs}" in instruction:
+            full_input = instruction.replace("{sample_logs}", logs_text)
+        else:
+            full_input = f"{instruction}\n\nLogs to analyze:\n{logs_text}"
         messages = [{"role": "user", "content": full_input}]
 
         start = time.monotonic()
@@ -55,38 +79,8 @@ class LLMParser:
         return response.content
 
     def _build_instruction(self, examples_text: str) -> str:
-        return f"""
-You will be given WiFi logs. Your task is to classify the event type (connect_flag) and extract a unified log template.
-
-Task 1:
-Assign a connect_flag based on the type of client-AP interaction:
-1 = The client connects or attempts to connect to the AP (includes authentication requests/responses, association requests/responses, IP detection, and reconnection attempts)
--1 = The client disconnects from the AP
-0 = All other events (e.g., DHCP events, connect failed, error, probe requests, etc.)
-
-Task 2:
-Replace all variable content with .*? to extract a Regular Expression Template while keeping fixed structure and delimiters.
-Your regular expression must match the entire log line from beginning to end.
-You are allowed to define named capture groups (?P<name>.*?) only for the following fields:
-- year/month/date/time/ampm: timestamp of the log
- - client_ip/ap_ip: IP address of the client or AP
- - client_mac/ap_mac: MAC address of the client or AP
- - client_name/ap_name: Name of the client or AP, may contain underscores and hyphens
- - ssid: Wi-Fi network name, not an AP
-
-IMPORTANT RULES:
-- Use ONLY .*? for ALL content matching. Do not use \\d+, \\w+, [0-9]+, [a-zA-Z]+ or any other specific character classes.
-- Extract only the client and AP involved in the actual event, not the logging source.
-- When the same field appears again, use numbered suffixes for named groups: (?P<ap_name_1>...), (?P<client_ip_2>...)
-- JSON handling: If logs contain JSON, capture the entire JSON as (?P<json_data>.*?).
-
-OUTPUT FORMAT
-You must respond with ONLY a valid JSON object. Do not include any explanations, code blocks, or additional text.
-Return exactly this format:
-{{"regex": "Regular expressions with named capture groups", "connect_flag": 1/-1/0}}
-
-{examples_text}
-""".strip()
+        del examples_text
+        return CONTENT_PARSING_PROMPT
 
     def get_total_time(self) -> float:
         return self._total_time

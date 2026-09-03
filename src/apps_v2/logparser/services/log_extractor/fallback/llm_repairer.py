@@ -13,6 +13,25 @@ from ..preprocessing.data_clusterer import Cluster
 from .regex_validator import RegexValidator
 
 
+SELF_REPAIR_PROMPT = r"""Task
+Fix the current regex so that it matches all provided log lines.
+
+Rules
+- Replace variable content with `.*?` while preserving fixed structure and delimiters.
+- The regex must match the entire log line.
+- Preserve all named capture groups and their semantics.
+- For JSON content, capture only relevant AP and client values with the existing named groups, and use `.*?` to skip unrelated key-value pairs.
+
+Input
+Current regex: {current_regex}
+Failure details: {failure_info}
+Log lines: {sample_logs}
+
+Output
+Return only:
+{"regex": "..."}"""
+
+
 @dataclass
 class ModelStats:
     calls: int = 0
@@ -76,7 +95,6 @@ class LLMRepairer:
                 client=client,
                 model=model,
                 broken_regex=broken_regex or "",
-                failed_log=failed_log or (cluster_logs[0] if cluster_logs else ""),
                 failure_info=failure_info or "Unknown failure",
                 samples=samples,
             )
@@ -128,28 +146,16 @@ class LLMRepairer:
         client: APIClient,
         model: str,
         broken_regex: str,
-        failed_log: str,
         failure_info: str,
         samples: Sequence[str],
     ) -> str | None:
         self.stats.attempted += 1
         self.model_stats[model].calls += 1
         samples_text = "\n".join(f"Sample {idx + 1}: {log}" for idx, log in enumerate(samples))
-        instructions = f"""
-ORIGINAL BROKEN REGEX:
-{broken_regex}
-
-FAILED LOG:
-{failed_log}
-
-The regex failed near:
-{failure_info}
-
-You must fix the regex to match ALL samples below without changing named capture group semantics.
-{samples_text}
-
-Respond ONLY with JSON: {{"regex": "fixed pattern here"}}
-""".strip()
+        instructions = SELF_REPAIR_PROMPT
+        instructions = instructions.replace("{current_regex}", broken_regex)
+        instructions = instructions.replace("{failure_info}", failure_info)
+        instructions = instructions.replace("{sample_logs}", samples_text)
         messages: Sequence[Mapping[str, str]] = [{"role": "user", "content": instructions}]
         start = time.monotonic()
         response = client.chat(messages)
