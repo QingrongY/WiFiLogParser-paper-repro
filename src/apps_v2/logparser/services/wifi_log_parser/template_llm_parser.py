@@ -47,7 +47,7 @@ IMPORTANT RULES:
 OUTPUT FORMAT
 You must respond with ONLY a valid JSON object. Do not include any explanations, code blocks, or additional text.
 Return exactly this format:
-{{"template": "Full-line template with placeholders", "connect_flag": 1/-1/0}}
+{{"template": "Full-line template with placeholders", "connect_flag": "<integer: 1, -1, or 0>"}}
 
 {examples_text}
 """.strip()

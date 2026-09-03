@@ -15,4 +15,4 @@ Failed log lines: {failed_logs}
 
 Output
 Return only:
-{"regex": "...", "date_format": "...", "time_format": "...", "has_year": true/false}
+{"regex": "...", "date_format": "...", "time_format": "...", "has_year": "<boolean: true or false>"}

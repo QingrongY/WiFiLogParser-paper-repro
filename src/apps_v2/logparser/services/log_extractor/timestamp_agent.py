@@ -34,7 +34,7 @@ Log lines: {sample_logs}
 
 Output
 Return only:
-{"regex": "...", "date_format": "...", "time_format": "...", "has_year": true/false}"""
+{"regex": "...", "date_format": "...", "time_format": "...", "has_year": "<boolean: true or false>"}"""
 
 
 TIMESTAMP_HEADER_REFINEMENT_PROMPT = r"""Task
@@ -54,7 +54,7 @@ Failed log lines: {failed_logs}
 
 Output
 Return only:
-{"regex": "...", "date_format": "...", "time_format": "...", "has_year": true/false}"""
+{"regex": "...", "date_format": "...", "time_format": "...", "has_year": "<boolean: true or false>"}"""
 
 
 @dataclass(frozen=True)
@@ -240,8 +240,7 @@ class TimestampAgent:
             f"regex: {rule.pattern.pattern}\n"
             f"date_format: {rule.date_strftime}\n"
             f"time_format: {rule.time_strftime}\n"
-            f"has_year: {str(rule.has_year).lower()}\n"
-            f"matching_coverage: {report.success_rate:.3f}"
+            f"has_year: {str(rule.has_year).lower()}"
         )
         prompt = TIMESTAMP_HEADER_REFINEMENT_PROMPT
         prompt = prompt.replace("{current_rule}", current_rule)
@@ -380,7 +379,11 @@ def _build_rule_from_json(data: dict) -> TimestampRule:
     regex_str = data.get("regex")
     date_fmt = data.get("date_format")
     time_fmt = data.get("time_format")
-    has_year = bool(data.get("has_year"))
+    raw_has_year = data.get("has_year")
+    if isinstance(raw_has_year, str):
+        has_year = raw_has_year.strip().lower() == "true"
+    else:
+        has_year = bool(raw_has_year)
     if not (regex_str and date_fmt and time_fmt):
         raise ValueError("TimestampAgent: missing regex/date_format/time_format from model response")
     try:

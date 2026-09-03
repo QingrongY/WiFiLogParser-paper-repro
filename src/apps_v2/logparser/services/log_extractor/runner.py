@@ -360,7 +360,7 @@ class LogExtractionRunner:
         except Exception:
             return {}
         try:
-            match = compiled.match(preprocessed_log)
+            match = compiled.fullmatch(preprocessed_log)
         except Exception:
             return {}
         if not match:

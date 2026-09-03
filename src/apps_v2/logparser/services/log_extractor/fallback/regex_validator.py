@@ -32,7 +32,7 @@ class RegexValidator:
 
         for log_line in logs:
             try:
-                match = regex.match(regex_pattern, log_line)
+                match = regex.fullmatch(regex_pattern, log_line)
                 if not match:
                     failure_info = self._find_failure_point_by_fields(regex_pattern, log_line)
                     return False, log_line, failure_info, "match_fail"

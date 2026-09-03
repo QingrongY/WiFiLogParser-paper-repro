@@ -30,7 +30,7 @@ Log lines: {sample_logs}
 
 Output
 Return only:
-{"regex": "...", "event_label": 1/-1/0}"""
+{"regex": "...", "event_label": "<integer: 1, -1, or 0>"}"""
 
 
 class LLMParser:
