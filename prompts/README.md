@@ -7,7 +7,8 @@ templates.
 
 | Experimental component | Prompt text | Implementation source |
 | --- | --- | --- |
-| Timestamp-header induction and refinement | [`timestamp_header_induction.txt`](timestamp_header_induction.txt) | [`timestamp_agent.py`](../src/apps_v2/logparser/services/log_extractor/timestamp_agent.py) |
+| Timestamp-header induction | [`timestamp_header.txt`](timestamp_header.txt) | [`timestamp_agent.py`](../src/apps_v2/logparser/services/log_extractor/timestamp_agent.py) |
+| Timestamp-header refinement | [`timestamp_header_refinement.txt`](timestamp_header_refinement.txt) | [`timestamp_agent.py`](../src/apps_v2/logparser/services/log_extractor/timestamp_agent.py) |
 | WiFiLogParser content parsing | [`wifilogparser_content_parsing.txt`](wifilogparser_content_parsing.txt) | [`llm_parser.py`](../src/apps_v2/logparser/services/log_extractor/llm/llm_parser.py) |
 | WiFiLogParser self-repair | [`self_repair.txt`](self_repair.txt) | [`llm_repairer.py`](../src/apps_v2/logparser/services/log_extractor/fallback/llm_repairer.py) |
 | Direct LLM parsing | [`direct_llm.txt`](direct_llm.txt) | Appendix A of the paper |
