@@ -24,8 +24,8 @@ results here contain no raw log lines or identifiers.
 
 The default run produced F1 0.894345, FEA 1.000000, 82 LLM calls, 154,075
 tokens, and a runtime of 91.392 s. This controlled default result supplies the
-University WiFiLogParser accuracy values in Tables 5 and 8. Fig. 7 reports a
-separate scaling experiment, including its own N=50,000 point.
+University WiFiLogParser accuracy values in Tables 5 and 8 and the N=50,000
+point in Fig. 7.
 
 Run the complete suite with:
 
