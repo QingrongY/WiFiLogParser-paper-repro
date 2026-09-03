@@ -118,6 +118,15 @@ Reference (aggregated) metrics from the authors' run are provided in `results/re
 Matched-scale Direct LLM aggregate results used in the revised Table 5 are
 provided in [`results/direct_llm_matched_scale/`](results/direct_llm_matched_scale/).
 
+The controlled University 50,000-line sensitivity rerun used for Table 8 is
+provided in
+[`results/sensitivity_controlled_rerun/`](results/sensitivity_controlled_rerun/).
+Its configuration and one-click runner are
+[`configs/sensitivity_controlled_rerun.json`](configs/sensitivity_controlled_rerun.json)
+and
+[`scripts/run_sensitivity_controlled.py`](scripts/run_sensitivity_controlled.py),
+respectively.
+
 ## Notes on evaluation
 
 - Wilson / University use **line-index matching** (`OriginalLineIdx`) with log-line filtering for 50k subsets.

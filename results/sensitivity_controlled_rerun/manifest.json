@@ -1,0 +1,12 @@
+{
+  "suite_run_ids": {
+    "default_gate": "20260903T031304Z",
+    "remaining_configurations": "20260903T031501Z"
+  },
+  "suite_config": "configs/sensitivity_controlled_rerun.json",
+  "suite_config_sha256": "d1592f8d617838cb4fe21dfd2e30d782370687f3a82f191156b2bc4375e4a090",
+  "runner": "scripts/run_main_experiments.py",
+  "orchestrator": "scripts/run_sensitivity_controlled.py",
+  "result_count": 11,
+  "results_csv": "results/sensitivity_controlled_rerun/summary.csv"
+}

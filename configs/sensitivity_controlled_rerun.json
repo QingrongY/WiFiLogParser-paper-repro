@@ -1,0 +1,33 @@
+{
+  "dataset": {
+    "name": "University_50000",
+    "log_path": "data/raw/University/University_50000.log",
+    "gt_path": "data/ground_truth/University/University_gt.csv",
+    "matching": "line_index"
+  },
+  "defaults": {
+    "model": "gemini-3.1-flash-lite",
+    "diversity_sample_size": 8,
+    "chunk_size": 50000,
+    "reasoning_effort": null,
+    "temperature": 0,
+    "maximum_completion_tokens": 8192,
+    "min_cluster_size": 2,
+    "disable_fallback": false,
+    "request_timeout_seconds": 60,
+    "max_retries": 1
+  },
+  "configurations": [
+    {"id": "default", "parameter": "Default", "setting": "k=8; chunk=50k; reasoning=off; Gemini 3.1 Flash-Lite"},
+    {"id": "k_2", "parameter": "Diversity sample size k", "setting": "2", "diversity_sample_size": 2},
+    {"id": "k_4", "parameter": "Diversity sample size k", "setting": "4", "diversity_sample_size": 4},
+    {"id": "k_16", "parameter": "Diversity sample size k", "setting": "16", "diversity_sample_size": 16},
+    {"id": "k_32", "parameter": "Diversity sample size k", "setting": "32", "diversity_sample_size": 32},
+    {"id": "chunk_5k", "parameter": "Chunk size", "setting": "5k", "chunk_size": 5000},
+    {"id": "chunk_10k", "parameter": "Chunk size", "setting": "10k", "chunk_size": 10000},
+    {"id": "chunk_100k", "parameter": "Chunk size", "setting": "100k", "chunk_size": 100000},
+    {"id": "reasoning_medium", "parameter": "Reasoning", "setting": "medium", "reasoning_effort": "medium"},
+    {"id": "gpt_4o_mini", "parameter": "Model", "setting": "GPT-4o-mini", "model": "gpt-4o-mini-2024-07-18"},
+    {"id": "gpt_4o", "parameter": "Model", "setting": "GPT-4o", "model": "gpt-4o-2024-08-06"}
+  ]
+}
