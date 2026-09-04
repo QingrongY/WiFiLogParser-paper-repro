@@ -26,7 +26,7 @@ Rules
 - For JSON content, capture only relevant AP and client values with the appropriate named groups, and use `.*?` to skip unrelated key-value pairs, e.g., `\{.*?"ap":"(?P<ap_name>.*?)".*?"client":"(?P<client_mac>.*?)".*?\}`.
 
 Input
-Log lines: {sample_logs}
+Log lines: {log_lines}
 
 Output
 Return only:
@@ -60,8 +60,8 @@ class LLMParser:
             return None
         logs_text = "\n".join(f"Log[{i + 1}]: `{log}`" for i, log in enumerate(logs))
         instruction = self._build_instruction(examples_text)
-        if "{sample_logs}" in instruction:
-            full_input = instruction.replace("{sample_logs}", logs_text)
+        if "{log_lines}" in instruction:
+            full_input = instruction.replace("{log_lines}", logs_text)
         else:
             full_input = f"{instruction}\n\nLogs to analyze:\n{logs_text}"
         messages = [{"role": "user", "content": full_input}]

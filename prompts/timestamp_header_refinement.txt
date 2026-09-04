@@ -9,9 +9,9 @@ Rules
 - Prefer `\s+` for variable spacing.
 
 Input
-Current rule: {current_rule}
-Successful log lines: {successful_logs}
-Failed log lines: {failed_logs}
+Current timestamp rule: {current_rule}
+Successful log lines: {successful_log_lines}
+Failed log lines: {failed_log_lines}
 
 Output
 Return only:

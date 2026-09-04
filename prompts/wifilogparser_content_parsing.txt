@@ -13,7 +13,7 @@ Rules
 - For JSON content, capture only relevant AP and client values with the appropriate named groups, and use `.*?` to skip unrelated key-value pairs, e.g., `\{.*?"ap":"(?P<ap_name>.*?)".*?"client":"(?P<client_mac>.*?)".*?\}`.
 
 Input
-Log lines: {sample_logs}
+Log lines: {log_lines}
 
 Output
 Return only:

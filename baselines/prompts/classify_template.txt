@@ -8,7 +8,7 @@ Rules
 
 Input
 Template: {template}
-Log lines: {sample_logs}
+Log lines: {log_lines}
 
 Output
 Return only:

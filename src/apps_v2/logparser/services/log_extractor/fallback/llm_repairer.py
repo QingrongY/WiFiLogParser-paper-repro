@@ -25,7 +25,7 @@ Rules
 Input
 Current regex: {current_regex}
 Failure details: {failure_info}
-Log lines: {sample_logs}
+Log lines: {log_lines}
 
 Output
 Return only:
@@ -155,7 +155,7 @@ class LLMRepairer:
         instructions = SELF_REPAIR_PROMPT
         instructions = instructions.replace("{current_regex}", broken_regex)
         instructions = instructions.replace("{failure_info}", failure_info)
-        instructions = instructions.replace("{sample_logs}", samples_text)
+        instructions = instructions.replace("{log_lines}", samples_text)
         messages: Sequence[Mapping[str, str]] = [{"role": "user", "content": instructions}]
         start = time.monotonic()
         response = client.chat(messages)

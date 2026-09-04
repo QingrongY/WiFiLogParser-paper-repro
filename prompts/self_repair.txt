@@ -10,7 +10,7 @@ Rules
 Input
 Current regex: {current_regex}
 Failure details: {failure_info}
-Log lines: {sample_logs}
+Log lines: {log_lines}
 
 Output
 Return only:

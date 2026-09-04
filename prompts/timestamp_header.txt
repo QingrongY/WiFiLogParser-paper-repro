@@ -9,7 +9,7 @@ Rules
 - Prefer `\s+` for variable spacing.
 
 Input
-Log lines: {sample_logs}
+Log lines: {log_lines}
 
 Output
 Return only:

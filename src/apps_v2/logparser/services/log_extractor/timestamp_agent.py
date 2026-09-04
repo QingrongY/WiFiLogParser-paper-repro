@@ -30,7 +30,7 @@ Rules
 - Prefer `\s+` for variable spacing.
 
 Input
-Log lines: {sample_logs}
+Log lines: {log_lines}
 
 Output
 Return only:
@@ -48,9 +48,9 @@ Rules
 - Prefer `\s+` for variable spacing.
 
 Input
-Current rule: {current_rule}
-Successful log lines: {successful_logs}
-Failed log lines: {failed_logs}
+Current timestamp rule: {current_rule}
+Successful log lines: {successful_log_lines}
+Failed log lines: {failed_log_lines}
 
 Output
 Return only:
@@ -216,7 +216,7 @@ class TimestampAgent:
 
     def _infer_rule_with_llm(self, sample_logs: Sequence[str]) -> TimestampRule:
         sample_text = "\n".join(f"Line {idx + 1}: {line}" for idx, line in enumerate(sample_logs))
-        prompt = TIMESTAMP_HEADER_PROMPT.replace("{sample_logs}", sample_text)
+        prompt = TIMESTAMP_HEADER_PROMPT.replace("{log_lines}", sample_text)
         messages = [{"role": "user", "content": prompt}]
         data = self._call_llm(messages)
         return _build_rule_from_json(data)
@@ -244,8 +244,8 @@ class TimestampAgent:
         )
         prompt = TIMESTAMP_HEADER_REFINEMENT_PROMPT
         prompt = prompt.replace("{current_rule}", current_rule)
-        prompt = prompt.replace("{successful_logs}", ok_text or "(none)")
-        prompt = prompt.replace("{failed_logs}", failures_text)
+        prompt = prompt.replace("{successful_log_lines}", ok_text or "(none)")
+        prompt = prompt.replace("{failed_log_lines}", failures_text)
         messages = [{"role": "user", "content": prompt}]
         data = self._call_llm(messages)
         return _build_rule_from_json(data)
